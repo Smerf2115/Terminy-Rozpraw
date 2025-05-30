@@ -3,73 +3,266 @@
 <head>
   <link rel="icon" type="image/png" href="https://cdn.discordapp.com/attachments/993142776915054674/1363806700544463054/Seal_of_the_United_States_Department_of_Justice.png?ex=683a2137&is=6838cfb7&hm=31c31789e4496bc5e02b829b5abbeadef2490188443b7d715e4bbe148c1b1b27&">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lista Najbliższych  Rozpraw</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rozprawy Sądowe</title>
   <style>
+    /* Reset i bazowe style */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 800px;
-      margin: auto;
-      padding: 2rem;
-      background: linear-gradient(to bottom, #885c3f, #885c3f);
+      background: linear-gradient(to bottom, #f8fafc, #e2e8f0);
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
-    h1 {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 2rem;
+    
+    /* Ekran powitalny */
+    #welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
-      color:rgb(255, 255, 255);
+      background: linear-gradient(to bottom, #e0f2fe, #bae6fd);
+      color: #1e3a8a;
+      transition: opacity 0.7s ease;
+      position: relative;
+      z-index: 10;
+      padding: 0 1rem;
     }
+    #welcome-screen h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: fadeSlide 1s ease forwards;
+    }
+    #welcome-screen p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    #startBtn {
+      padding: 0.85rem 3rem;
+      font-size: 1.15rem;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(30,58,138,0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    #startBtn:hover {
+      background-color: #2563eb;
+      box-shadow: 0 10px 18px rgba(37,99,235,0.6);
+    }
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Główna aplikacja */
+    #main-app {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto 4rem auto;
+    }
+    #main-app.show {
+      display: block;
+      opacity: 1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 3rem;
+      color: #1e3a8a;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    /* Zakładki */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .tabs button {
+      padding: 0.7rem 1.6rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #1e3a8a;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 5px 12px rgba(30,58,138,0.5);
+      flex-grow: 1;
+      max-width: 160px;
+    }
+    .tabs button:hover,
+    .tabs button.active {
+      background-color: #3b82f6;
+      transform: scale(1.05);
+      box-shadow: 0 8px 18px rgba(59,130,246,0.7);
+    }
+
+    /* Sekcje */
+    .section {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Karty rozpraw */
     .card {
-      background: rgb(255, 255, 255);
-      border: 1px solid #ffd900;
-      border-radius: 16px;
+      background: white;
+      border-radius: 1rem;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.07);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      border-left: 5px solid #3b82f6;
     }
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transform: scale(1.03);
+      box-shadow: 0 15px 25px rgba(59,130,246,0.3);
+      border-left-color: #2563eb;
     }
     .card div {
       margin-bottom: 0.5rem;
-    }
-    .date-status {
-      font-size: 0.95rem;
-      color: #475569;
-    }
-    .nr {
-      font-size: 1.1rem;
-      font-weight: bold;
+      font-weight: 600;
       color: #1e293b;
     }
-    .sedzia, .prokurator, .oskarzony, .opis {
-      font-size: 0.95rem;
+    .card div span {
+      font-weight: 400;
+      color: #475569;
+      margin-left: 0.3rem;
+    }
+
+    /* Floating background icons */
+    .floating-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .floating-background span {
+      position: absolute;
+      font-size: 3rem;
+      animation: float 18s linear infinite;
+      opacity: 0.05;
+      color: #1e3a8a;
+      user-select: none;
+    }
+    .floating-background span:nth-child(1) { top: 5%; left: 10%; animation-delay: 0s; }
+    .floating-background span:nth-child(2) { top: 20%; left: 80%; animation-delay: 4s; }
+    .floating-background span:nth-child(3) { top: 60%; left: 15%; animation-delay: 8s; }
+    .floating-background span:nth-child(4) { top: 75%; left: 50%; animation-delay: 12s; }
+    .floating-background span:nth-child(5) { top: 45%; left: 95%; animation-delay: 16s; }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.05; }
+      50% { opacity: 0.1; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(5px);
+      background-color: rgba(0,0,0,0.3);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background-color: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      position: relative;
+      color: #1e293b;
+    }
+    .close-button {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+      user-select: none;
       color: #334155;
+      transition: color 0.2s ease;
+    }
+    .close-button:hover {
+      color: #ef4444;
+    }
+
+    /* Formularze */
+    .password-input {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+      font-size: 1rem;
+    }
+    .access-button {
+      padding: 0.5rem 1rem;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    .access-button:hover {
+      background-color: #2563eb;
+    }
+    .hidden {
+      display: none;
     }
 
 
-  </style>
-</head>
-<body>
-  <div class="logo">
-  <img src="https://cdn.discordapp.com/attachments/993142776915054674/1363806700544463054/Seal_of_the_United_States_Department_of_Justice.png?ex=683a2137&is=6838cfb7&hm=31c31789e4496bc5e02b829b5abbeadef2490188443b7d715e4bbe148c1b1b27&" alt="Logo" />
-</div>
-
-  <h1>Lista Najbliższych Rozpraw</h1>
-
-  <div class="card">
-    <div class="date-status">📅 2025-05-30 20:00 – <strong>Zaplanowana</strong></div>
-    <div class="nr">📁 Sprawa nr: CR-20250530-001 </div>
-    <div class="sedzia">🎓 <strong>Sędzia:</strong> Noah Luis</div>
-    <div class="prokurator">⚖️ <strong>Prokurator:</strong> Diego Hawana</div>
-    <div class="oskarzony">🚔 <strong>Oskarżony:</strong> Choy Cieto </div>
-    <div class="opis">📝 <strong>Opis:</strong> Sprawa karna dot. Kary Śmierci</div>
-  </div>
-<style> 
-  .logo {
+  
+.logo {
   text-align: center;
   margin-bottom: 1.5rem;
 }
@@ -78,7 +271,179 @@
   max-width: 150px;
   height: auto;
 }
-</style>
+
+  </style>
+</head>
+<body>
+
+
+  <!-- Ekran powitalny -->
+  <div id="welcome-screen">
+    <div class="logo">
+  <img src="https://cdn.discordapp.com/attachments/993142776915054674/1363806700544463054/Seal_of_the_United_States_Department_of_Justice.png?ex=683a2137&is=6838cfb7&hm=31c31789e4496bc5e02b829b5abbeadef2490188443b7d715e4bbe148c1b1b27&" alt="Logo" />
+</div>
+    <h1>👩‍⚖️ Rozprawy Sądowe</h1>
+    <p>Platforma do przeglądania rozpraw, statystyk i dokumentów.</p>
+    <button id="startBtn">Rozpocznij</button>
+  </div>
+
+  <!-- Główna aplikacja -->
+  <div id="main-app">
+    <div class="floating-background">
+      <span>⚖️</span>
+      <span>📁</span>
+      <span>👨‍⚖️</span>
+      <span>📜</span>
+      <span>🕰️</span>
+    </div>
+
+    <header>
+      <h1>Twoje Rozprawy</h1>
+    </header>
+
+    <div class="tabs">
+      <button class="active" data-tab="cases">Rozprawy</button>
+      <button data-tab="stats">Statystyki</button>
+      <button data-tab="docs">Dokumenty</button>
+    </div>
+
+    <section id="cases" class="section active">
+      <div class="card" data-id="1" tabindex="CR-20250530-001" role="button" aria-pressed="false" aria-label="Szczegóły rozprawy 1">
+<div><strong>STATUS:</strong> <span style="color: green;">ZAPLANOWANA</span></div>
+        <div><strong>Data:</strong> <span>2025-05-30</span></div>
+        <div><strong>Rozprawa O:</strong> <span>Karę pozbawienia Wolności oraz Grzywny</span></div>
+        <div><strong>Godzina:</strong> <span>21:00</span></div>
+      </div>
+     
+      <!-- Dodaj więcej kart według potrzeby -->
+    
+    </section>
+
+ <section id="stats" class="section">
+      <h2>Statystyki rozpraw</h2>
+      <p>Tu będą wykresy i dane statystyczne.</p>
+
+     <h1> SOON </h1>
+      
+    
+    
+    </section>
+
+
+    <section id="docs" class="section">
+      <h2>Dokumenty spraw</h2>
+      <p>Tu będą dokumenty do pobrania i przeglądania.</p>
+
+      <h1> SOON </h1>
+    </section>
+  </div>
+
+  <!-- Modal ze szczegółami -->
+  <div class="modal" id="modal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <span class="close-button" id="closeModal" aria-label="Zamknij">&times;</span>
+      <h3 id="modalTitle">Szczegóły rozprawy</h3>
+      <p id="modalContent">Ładowanie danych...</p>
+    </div>
+  </div>
+
+<script>
+  // Przejście ekranu powitalnego do głównej aplikacji
+  const startBtn = document.getElementById('startBtn');
+  const welcomeScreen = document.getElementById('welcome-screen');
+  const mainApp = document.getElementById('main-app');
+
+  startBtn.addEventListener('click', () => {
+    // Fade out welcome screen
+    welcomeScreen.style.opacity = '0';
+
+    // Po zaniku ukryj welcome i pokaż main app z fade in
+    setTimeout(() => {
+      welcomeScreen.style.display = 'none';
+      mainApp.style.display = 'block';
+
+      setTimeout(() => {
+        mainApp.classList.add('show');
+      }, 50);
+    }, 700);
+  });
+
+  // Zakładki
+  const tabs = document.querySelectorAll('.tabs button');
+  const sections = document.querySelectorAll('.section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      sections.forEach(sec => {
+        if (sec.id === tab.dataset.tab) {
+          sec.classList.add('active');
+        } else {
+          sec.classList.remove('active');
+        }
+      });
+    });
+  });
+
+  // Modal szczegółów rozpraw
+  const cards = document.querySelectorAll('.card');
+  const modal = document.getElementById('modal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const modalContent = document.getElementById('modalContent');
+  const modalTitle = document.getElementById('modalTitle');
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.getAttribute('data-id');
+      showDetails(id);
+    });
+    // Obsługa klawiatury dla dostępności
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const id = card.getAttribute('data-id');
+        showDetails(id);
+      }
+    });
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  function showDetails(id) {
+    modalTitle.textContent = `Szczegóły rozprawy nr ${id}`;
+    modalContent.textContent = 'Ładowanie danych...';
+
+    modal.style.display = 'flex';
+
+    // Tu można podpiąć ajax/fetch do pobrania danych, na razie demo:
+    setTimeout(() => {
+      modalContent.innerHTML = `
+        <strong>Rozprawa nr  ${id}</strong><br/>
+        Sygnatura Sprawy: ${id === '1' ? 'CR-20250530-001' : '12'}<br/>
+        Data: 2025-05-${id === '1' ? '30' : '12'}<br/>
+        Oskarżony: ${id === '1' ? 'Choy Cieto' : 'BRAK'}<br/>
+        Sala: ${id === 'Rozpraw' ? '1' : '2'}<br/>
+        Rozprawa: Jawna <br/>
+        Sędzia: ${id === '1' ? 'Noah Luis' : 'BRAK'}<br/>
+        Prokurator: ${id === '1' ? 'Diego Hawana, Marcus Lane' : 'Janusz Kowalczyk'}<br/>
+        Notatki: .
+      `;
+    }, 700);
+  }
+
+
+  
+</script>
+
 
 </body>
 </html>
