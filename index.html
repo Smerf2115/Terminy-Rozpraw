@@ -308,13 +308,18 @@
     </div>
 
     <section id="cases" class="section active">
-      <div class="card" data-id="1" tabindex="CR-20250530-001" role="button" aria-pressed="false" aria-label="Szczegóły rozprawy 1">
-<div><strong>STATUS:</strong> <span style="color: green;">ZAPLANOWANA</span></div>
+      <div class="card" data-id="2" tabindex="CR-20250530-001" role="button" aria-pressed="false" aria-label="Szczegóły rozprawy 1">
+<div><strong>STATUS:</strong> <span style="color: red;">ODWOŁANA</span></div>
         <div><strong>Data:</strong> <span>2025-05-30</span></div>
         <div><strong>Rozprawa O:</strong> <span>Karę pozbawienia Wolności oraz Grzywny</span></div>
         <div><strong>Godzina:</strong> <span>21:00</span></div>
       </div>
-     
+           <div class="card" data-id="1" tabindex="CR-20250607-002" role="button" aria-pressed="false" aria-label="Szczegóły rozprawy 2">
+<div><strong>STATUS:</strong> <span style="color: green;">ZAPLANOWANA</span></div>
+        <div><strong>Data:</strong> <span>2025-06-07</span></div>
+        <div><strong>Rozprawa O:</strong> <span>Sprawa o Karę Śmierci</span></div>
+        <div><strong>Godzina:</strong> <span>19:00</span></div>
+      </div>
       <!-- Dodaj więcej kart według potrzeby -->
     
     </section>
@@ -428,13 +433,13 @@
     setTimeout(() => {
       modalContent.innerHTML = `
         <strong>Rozprawa nr  ${id}</strong><br/>
-        Sygnatura Sprawy: ${id === '1' ? 'CR-20250530-001' : '12'}<br/>
-        Data: 2025-05-${id === '1' ? '30' : '12'}<br/>
-        Oskarżony: ${id === '1' ? 'Choy Cieto' : 'BRAK'}<br/>
+        Sygnatura Sprawy: ${id === '1' ? 'CR-20250607-002' : 'CR-20250530-001'}<br/>
+        Data: 2025-06-${id === '1' ? '07' : '30.05.2025'}<br/>
+        Oskarżony: ${id === '1' ? 'Rambo Escuella' : 'Choy Cieto'}<br/>
         Sala: ${id === 'Rozpraw' ? '1' : '2'}<br/>
         Rozprawa: Jawna <br/>
-        Sędzia: ${id === '1' ? 'Noah Luis' : 'BRAK'}<br/>
-        Prokurator: ${id === '1' ? 'Diego Hawana, Marcus Lane' : 'Janusz Kowalczyk'}<br/>
+        Sędzia: ${id === '1' ? 'Mac Bubble' : 'Noah Luis'}<br/>
+        Prokurator: ${id === '1' ? 'Diego Hawana, Marcus Lane' : 'Diego Hawana, Marcus Lane'}<br/>
         Notatki: .
       `;
     }, 700);
